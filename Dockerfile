@@ -3,13 +3,6 @@ FROM node:18
 # Set up a new user named "user" with user ID 1000
 RUN useradd -o -u 1000 user
 
-# Switch to the "user" user
-USER user
-
-# Set home to the user's home directory
-ENV HOME=/home/user \
-	PATH=/home/user/.local/bin:$PATH
-
 # Install pip
 RUN apt-get update && apt-get install -y \
     software-properties-common
@@ -24,6 +17,13 @@ RUN apt-get update && apt-get install -y \
     php5-mysql \
     python3.4 \
     python3-pip
+
+# Switch to the "user" user
+USER user
+
+# Set home to the user's home directory
+ENV HOME=/home/user \
+	PATH=/home/user/.local/bin:$PATH
 
 # Install kaggle silently
 RUN yes | pip install kaggle -q -q -q --exists-action i
