@@ -4,3 +4,7 @@ dist
 dist-ssr
 *.local
 .eslintcache
+.env
+
+# A custom file containing research notes
+research.md
