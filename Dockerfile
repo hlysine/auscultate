@@ -20,7 +20,7 @@ ENV HOME=/home/user \
 	PATH=/home/user/.local/bin:$PATH
 
 # Install kaggle silently
-RUN yes | pip3 install kaggle -q -q -q --exists-action i
+RUN yes | pip3 install kaggle --exists-action i
 
 # Set the working directory to the user's home directory
 WORKDIR $HOME/app
