@@ -12,15 +12,15 @@ RUN apt-get update && apt-get install -y \
     python3.11 \
     python3-pip
 
+# Install kaggle silently
+RUN yes | pip3 install kaggle --exists-action i
+
 # Switch to the "user" user
 USER user
 
 # Set home to the user's home directory
 ENV HOME=/home/user \
 	PATH=/home/user/.local/bin:$PATH
-
-# Install kaggle silently
-RUN yes | pip3 install kaggle --exists-action i
 
 # Set the working directory to the user's home directory
 WORKDIR $HOME/app
