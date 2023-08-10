@@ -26,20 +26,18 @@ WORKDIR $HOME/app
 # Copy the current directory contents into the container at $HOME/app setting the owner to the user
 COPY --chown=user . $HOME/app
 
+# Install npm dependencies
+RUN npm install
+
+# Build client and server
+RUN npm run build
+
+# Download dataset from Kaggle
 RUN --mount=type=secret,id=KAGGLE_USERNAME,mode=0444,required=true \
     --mount=type=secret,id=KAGGLE_KEY,mode=0444,required=true \
     export KAGGLE_USERNAME=$(cat /run/secrets/KAGGLE_USERNAME) && \
     export KAGGLE_KEY=$(cat /run/secrets/KAGGLE_KEY) && \
-    kaggle datasets download -d bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2 --unzip -p $HOME/app/dist/data
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-# COPY --chown=user package*.json $HOME/app
-
-RUN npm install
-
-RUN npm run build
+    kaggle datasets download -d bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2 --unzip -p $HOME/app/dist/app/data
 
 EXPOSE 7860
 CMD [ "npm", "run", "start" ]
