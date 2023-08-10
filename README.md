@@ -1,3 +1,12 @@
+---
+title: auscultate
+emoji: 🩺
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # Vite Boilerplate
 
 > Quickly bootstrap a new project with Vite Boilerplate.
