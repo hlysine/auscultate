@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 # Install kaggle silently
-RUN yes | pip3 install kaggle --exists-action i
+RUN yes | pip3 install kaggle --exists-action i --break-system-packages
 
 # Switch to the "user" user
 USER user
