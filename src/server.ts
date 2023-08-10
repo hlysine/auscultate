@@ -3,7 +3,7 @@ import express from 'express';
 import router from './lib/router';
 import path from 'path';
 
-const { PORT = 3001 } = process.env;
+const { PORT = 7860 } = process.env;
 
 const app = express();
 

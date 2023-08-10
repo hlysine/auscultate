@@ -36,7 +36,7 @@ Boom! These scripts run your server, client and storybook in development mode.
 
 The default PORTS are:
 
-- `3001` for the server
+- `7860` for the server
 - `3000` for the client
 - `6006` for the storybook
 
@@ -52,7 +52,7 @@ You can configure the server port by setting the `PORT` environment variable. Cr
 
 | KEY  | VALUE                                                         |
 | ---- | ------------------------------------------------------------- |
-| PORT | (Optional) Port for the server environment (defaults to 3001) |
+| PORT | (Optional) Port for the server environment (defaults to 7860) |
 
 ## Building
 
