@@ -73,6 +73,7 @@ export default function AuscultationTrack({
         spectrogramPlugin.destroy();
       };
     }
+    return undefined;
   }, [showSpectrogram]);
   useEffect(() => {
     regions.current?.clearRegions();

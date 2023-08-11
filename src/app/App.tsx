@@ -545,14 +545,16 @@ export default function App(): JSX.Element {
             <div className="collapse-content">
               <div className="p-4 pt-0 flex flex-col items-center w-full gap-4">
                 <p className="text-lg">{getMurmurDescription(patient)}</p>
-                <p>
-                  All audible locations:{' '}
-                  {patient.murmurLocations.map(loc => (
-                    <kbd className="kbd" key={loc}>
-                      {nameLocation(loc)}
-                    </kbd>
-                  ))}
-                </p>
+                {patient.murmur !== MurmurStatus.Present ? null : (
+                  <p>
+                    All audible locations:{' '}
+                    {patient.murmurLocations.map(loc => (
+                      <kbd className="kbd" key={loc}>
+                        {nameLocation(loc)}
+                      </kbd>
+                    ))}
+                  </p>
+                )}
                 <div className="flex gap-8 my-4 justify-end flex-wrap">
                   <div className="flex items-center gap-4">
                     <span className="label-text">Annotations:</span>
