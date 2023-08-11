@@ -528,6 +528,7 @@ export default function App(): JSX.Element {
               patient={patient}
               track={track}
               zoom={audioZoom}
+              showAnswer={showAnswer}
               spectrogram={showAnswer && spectrogram}
               regionsLevel={showAnswer ? regionsLevel : RegionsLevel.None}
             />

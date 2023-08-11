@@ -19,6 +19,7 @@ export interface AuscultationTrackProps {
   patient: FullPatient;
   track: AuscultationTrack;
   zoom: number;
+  showAnswer: boolean;
   spectrogram: boolean;
   regionsLevel: RegionsLevel;
 }
@@ -49,6 +50,7 @@ export default function AuscultationTrack({
   patient,
   track,
   zoom,
+  showAnswer,
   spectrogram: showSpectrogram,
   regionsLevel,
 }: AuscultationTrackProps): JSX.Element {
@@ -66,7 +68,6 @@ export default function AuscultationTrack({
         height: 100,
       });
       wavesurfer.current?.registerPlugin(spectrogramPlugin);
-      console.log(wavesurfer.current?.getActivePlugins());
       spectrogramPlugin.render();
       return () => {
         spectrogramPlugin.destroy();
@@ -170,6 +171,19 @@ export default function AuscultationTrack({
         <span className="text-xl text-center flex-1">
           {nameLocation(track.location)}
         </span>
+
+        <span
+          className="text-lg text-center"
+          style={{
+            visibility:
+              showAnswer && patient.murmurLocations.includes(track.location)
+                ? 'visible'
+                : 'hidden',
+          }}
+        >
+          Murmur detected
+        </span>
+
         <div className="flex gap-2">
           <button
             className="btn btn-accent flex-grow-[2]"
