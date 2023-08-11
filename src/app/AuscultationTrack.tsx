@@ -3,25 +3,43 @@ import { AuscultationTrack, FullPatient, nameLocation } from '../types';
 import WaveSurfer from 'wavesurfer.js';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
 import TimelinePlugin from 'wavesurfer.js/plugins/timeline';
+import SpectrogramPlugin from 'wavesurfer.js/plugins/spectrogram';
 import { getDataUrl } from './api';
 import { useAudio } from './AudioContext';
+import './waveform.css';
 
 export interface AuscultationTrackProps {
   patient: FullPatient;
   track: AuscultationTrack;
   zoom: number;
+  spectrogram: boolean;
 }
 
 export default function AuscultationTrack({
   patient,
   track,
   zoom,
+  spectrogram: showSpectrogram,
 }: AuscultationTrackProps): JSX.Element {
   const waveformId = ('waveform' + track.audioFile).replaceAll('.', '_');
 
   const { nowPlaying, setNowPlaying } = useAudio();
 
   const wavesurfer = useRef<WaveSurfer>();
+  useEffect(() => {
+    if (showSpectrogram) {
+      const spectrogramPlugin = SpectrogramPlugin.create({
+        labels: true,
+        height: 100,
+      });
+      wavesurfer.current?.registerPlugin(spectrogramPlugin);
+      console.log(wavesurfer.current?.getActivePlugins());
+      spectrogramPlugin.render();
+      return () => {
+        spectrogramPlugin.destroy();
+      };
+    }
+  }, [showSpectrogram]);
   useEffect(() => {
     const instance = WaveSurfer.create({
       container: '#' + waveformId,
@@ -37,8 +55,12 @@ export default function AuscultationTrack({
     });
     wavesurfer.current = instance;
     return () => {
-      instance.unAll();
-      instance.destroy();
+      try {
+        instance.destroy();
+      } catch (e) {
+        console.log(e); // an error may be thrown because the spectrogram plugin is destroyed twice
+      }
+      wavesurfer.current = undefined;
     };
   }, []);
 
@@ -89,7 +111,7 @@ export default function AuscultationTrack({
           </button>
         </div>
       </div>
-      <div id={waveformId} className="flex-1 min-w-[250px]"></div>
+      <div id={waveformId} className="waveform flex-1 min-w-[250px]"></div>
     </div>
   );
 }

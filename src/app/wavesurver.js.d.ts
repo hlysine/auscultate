@@ -6,3 +6,7 @@ declare module 'wavesurfer.js/plugins/timeline' {
   const timeline: any;
   export default timeline;
 }
+declare module 'wavesurfer.js/plugins/spectrogram' {
+  const spectrogram: any;
+  export default spectrogram;
+}

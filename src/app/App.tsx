@@ -167,6 +167,13 @@ function getMurmurDescription(patient: FullPatient): ReactNode {
   }
 }
 
+enum RegionsLevel {
+  None = 0,
+  Markers = 1,
+  HeartSounds = 2,
+  Full = 3,
+}
+
 export default function App(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -180,6 +187,11 @@ export default function App(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [audioZoom, setAudioZoom] = useState(100);
+  const [regionsLevel, setRegionsLevel] = useState<RegionsLevel>(
+    RegionsLevel.None
+  );
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [spectrogram, setSpectrogram] = useState(false);
 
   const getRandom = () => {
     setLoading(true);
@@ -219,6 +231,7 @@ export default function App(): JSX.Element {
   };
 
   useEffect(() => {
+    setShowAnswer(false);
     setFilterParams(paramsToFilter(searchParams));
     if (patientId === null) {
       if (searchParams.has('id')) {
@@ -263,7 +276,7 @@ export default function App(): JSX.Element {
         Filter and access auscultation sound tracks from the CirCor DigiScope
         Phonocardiogram Dataset.
       </p>
-      <div className="collapse bg-base-200 my-4">
+      <div className="collapse collapse-arrow bg-base-200 my-4">
         <input type="checkbox" />
         <div className="collapse-title text-xl font-medium">Select Filters</div>
         <div className="collapse-content">
@@ -522,23 +535,64 @@ export default function App(): JSX.Element {
               patient={patient}
               track={track}
               zoom={audioZoom}
+              spectrogram={showAnswer && spectrogram}
             />
           ))}
-          <div className="collapse bg-base-200">
-            <input type="checkbox" />
+          <div className="collapse collapse-arrow bg-base-200">
+            <input
+              type="checkbox"
+              checked={showAnswer}
+              onChange={e => setShowAnswer(e.target.checked)}
+            />
             <div className="collapse-title text-xl font-medium">
               Heart Sound Analysis
             </div>
             <div className="collapse-content">
-              <p className="mb-4 text-lg">{getMurmurDescription(patient)}</p>
-              <p>
-                All audible locations:{' '}
-                {patient.murmurLocations.map(loc => (
-                  <kbd className="kbd" key={loc}>
-                    {nameLocation(loc)}
-                  </kbd>
-                ))}
-              </p>
+              <div className="p-4 pt-0 flex flex-col items-center w-full gap-4">
+                <p className="text-lg">{getMurmurDescription(patient)}</p>
+                <p>
+                  All audible locations:{' '}
+                  {patient.murmurLocations.map(loc => (
+                    <kbd className="kbd" key={loc}>
+                      {nameLocation(loc)}
+                    </kbd>
+                  ))}
+                </p>
+                <div className="flex gap-8 my-4 justify-end flex-wrap">
+                  <div className="flex items-center gap-4">
+                    <span className="label-text">Annotations:</span>
+                    <div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="3"
+                        value={regionsLevel}
+                        onChange={e => setRegionsLevel(Number(e.target.value))}
+                        className="range"
+                        step="1"
+                      />
+                      <div className="w-full flex justify-between text-[5px] px-2">
+                        <span>|</span>
+                        <span>|</span>
+                        <span>|</span>
+                        <span>|</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="divider-vertical" />
+                  <div className="form-control">
+                    <label className="label cursor-pointer flex gap-4">
+                      <span className="label-text">Show spectrogram:</span>
+                      <input
+                        type="checkbox"
+                        className="toggle"
+                        checked={spectrogram}
+                        onChange={e => setSpectrogram(e.target.checked)}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
