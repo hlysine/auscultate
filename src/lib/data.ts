@@ -51,18 +51,20 @@ export async function readPatients(): Promise<void> {
             pitch: row[18],
             quality: row[19],
           },
-    outcome: row[20],
-    campaign: row[21],
-    additionalId: row[22] === 'nan' ? null : parseInt(row[22], 10),
+    campaign: row[20],
+    additionalId: row[21] === 'nan' ? null : parseInt(row[21], 10),
   }));
 }
 
 export async function readAuscultation(
   patientId: number
 ): Promise<Auscultation> {
-  const data = await fs.readFile(DATA_DIR + `training_data/${patientId}.txt`, {
-    encoding: 'utf8',
-  });
+  const data = await fs.readFile(
+    DATA_DIR + `training_data/training_data/${patientId}.txt`,
+    {
+      encoding: 'utf8',
+    }
+  );
   const lines = data.split(/\r?\n/);
   const auscultation: Auscultation = {
     patientId,
@@ -72,7 +74,7 @@ export async function readAuscultation(
   for (let i = 1; i <= trackCount; i++) {
     const [location, headerFile, audioFile, segmentsFile] = lines[i].split(' ');
     const segments = await fs.readFile(
-      DATA_DIR + `training_data/${segmentsFile}`,
+      DATA_DIR + `training_data/training_data/${segmentsFile}`,
       {
         encoding: 'utf8',
       }

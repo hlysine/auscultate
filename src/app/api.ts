@@ -20,5 +20,5 @@ export async function getRandomPatient(
 }
 
 export function getDataUrl(filename: string): string {
-  return `${SERVER_BASE_PATH}data/training_data/${filename}`;
+  return `${SERVER_BASE_PATH}data/training_data/training_data/${filename}`;
 }

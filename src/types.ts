@@ -148,11 +148,6 @@ export enum MurmurQuality {
   Musical = 'Musical',
 }
 
-export enum Outcome {
-  Normal = 'Normal',
-  Abnormal = 'Abnormal',
-}
-
 export enum Campaign {
   CC2015 = 'CC2015',
   CC2014 = 'CC2014',
@@ -179,7 +174,6 @@ export interface Patient {
   mostAudible: Location | null;
   systolicMurmur: Murmur | null;
   diastolicMurmur: Murmur | null;
-  outcome: Outcome;
   campaign: Campaign;
   additionalId: number | null;
 }
