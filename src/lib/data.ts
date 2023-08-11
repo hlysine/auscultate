@@ -1,96 +1,8 @@
 import { parse } from '@vanillaes/csv';
 import fs from 'fs/promises';
+import { Patient, getTiming } from '../types';
 
 const DATA_DIR = 'dist/app/data/';
-
-export enum Location {
-  Pulmonary = 'PV',
-  Tricuspid = 'TV',
-  Aortic = 'AV',
-  Mitral = 'MV',
-  Other = 'Phc',
-}
-
-export enum Age {
-  Neonate = 'Neonate',
-  Infant = 'Infant',
-  Child = 'Child',
-  Adolescent = 'Adolescent',
-  YoungAdult = 'Young adult',
-}
-
-export enum Sex {
-  Male = 'Male',
-  Female = 'Female',
-}
-
-export enum MurmurStatus {
-  Present = 'Present',
-  Absent = 'Absent',
-  Unknown = 'Unknown',
-}
-
-export enum MurmurTiming {
-  EarlySystolic = 'Early-systolic',
-  Holosystolic = 'Holosystolic',
-  LateSystolic = 'Late-systolic',
-  MidSystolic = 'Mid-systolic',
-}
-
-export enum MurmurShape {
-  Crescendo = 'Crescendo',
-  Decrescendo = 'Decrescendo',
-  Diamond = 'Diamond',
-  Plateau = 'Plateau',
-}
-
-export enum MurmurPitch {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-}
-
-export enum MurmurGrading {
-  Grade1 = 'I/VI',
-  Grade2 = 'II/VI',
-  Grade3 = 'III/VI',
-}
-
-export enum MurmurQuality {
-  Blowing = 'Blowing',
-  Harsh = 'Harsh',
-  Musical = 'Musical',
-}
-
-export enum Campaign {
-  CC2015 = 'CC2015',
-  CC2014 = 'CC2014',
-}
-
-export interface Murmur {
-  timing: MurmurTiming;
-  shape: MurmurShape;
-  grading: MurmurGrading;
-  pitch: MurmurPitch;
-  quality: MurmurQuality;
-}
-
-export interface Patient {
-  patientId: number;
-  locations: Location[];
-  age: Age | null;
-  sex: Sex;
-  height: number | null;
-  weight: number | null;
-  isPregnant: boolean;
-  murmur: MurmurStatus;
-  murmurLocations: Location[];
-  mostAudible: Location | null;
-  systolicMurmur: Murmur | null;
-  diastolicMurmur: Murmur | null;
-  campaign: Campaign;
-  additionalId: number | null;
-}
 
 export let patients: Patient[] = [];
 
@@ -117,7 +29,7 @@ export async function readPatients(): Promise<void> {
       row[10] === 'nan'
         ? null
         : {
-            timing: row[10],
+            timing: getTiming(row[10]),
             shape: row[11],
             grading: row[12],
             pitch: row[13],
@@ -127,7 +39,7 @@ export async function readPatients(): Promise<void> {
       row[15] === 'nan'
         ? null
         : {
-            timing: row[15],
+            timing: getTiming(row[15]),
             shape: row[16],
             grading: row[17],
             pitch: row[18],
