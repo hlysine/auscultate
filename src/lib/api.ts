@@ -4,12 +4,15 @@ import { validate, wrap } from './helper';
 import { patients, readAuscultation } from './data';
 import { notFound } from '@hapi/boom';
 import {
+  FullPatient,
   Location,
+  MurmurFilter,
   MurmurGrading,
   MurmurPitch,
   MurmurQuality,
   MurmurShape,
   MurmurTiming,
+  RandomResult,
 } from '../types';
 
 const router = express.Router();
@@ -25,7 +28,7 @@ router.get(
             location: z
               .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
               .optional(),
-            murmur: z.enum(['systolic', 'diastolic', 'any', 'none']).optional(),
+            murmur: z.nativeEnum(MurmurFilter).optional(),
             murmurLocation: z
               .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
               .optional(),
@@ -157,7 +160,7 @@ router.get(
     res.status(200).json({
       patientId: patient.patientId,
       count: filtered.length,
-    });
+    } satisfies RandomResult);
   })
 );
 
@@ -184,7 +187,7 @@ router.get(
     res.status(200).json({
       ...patient,
       ...auscultation,
-    });
+    } satisfies FullPatient);
   })
 );
 

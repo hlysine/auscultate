@@ -6,6 +6,28 @@ export enum Location {
   Other = 'Phc',
 }
 
+export function nameLocation(location: Location) {
+  switch (location) {
+    case Location.Pulmonary:
+      return 'Pulmonary valve';
+    case Location.Tricuspid:
+      return 'Tricuspid valve';
+    case Location.Aortic:
+      return 'Aortic valve';
+    case Location.Mitral:
+      return 'Mitral valve';
+    case Location.Other:
+      return 'Other locations';
+  }
+}
+
+export enum MurmurFilter {
+  Systolic = 'systolic',
+  Diastolic = 'diastolic',
+  None = 'none',
+  Any = 'any',
+}
+
 export enum Age {
   Neonate = 'Neonate',
   Infant = 'Infant',
@@ -30,6 +52,21 @@ export enum MurmurTiming {
   Holo = 'Holo',
   Late = 'Late',
   Mid = 'Mid',
+}
+
+export function nameTiming(
+  timing: MurmurTiming,
+  type: 'systolic' | 'diastolic' | 'general' = 'general'
+) {
+  let prefix: string = timing;
+
+  if (timing === MurmurTiming.Holo) {
+    prefix = 'Pan';
+  }
+
+  if (type === 'general') {
+    return prefix;
+  } else return prefix + '-' + type;
 }
 
 export function getTiming(desc: string): MurmurTiming {
@@ -125,4 +162,23 @@ export interface AuscultationTrack {
 export interface Auscultation {
   patientId: number;
   tracks: AuscultationTrack[];
+}
+
+export interface FullPatient extends Patient, Auscultation {}
+
+export interface RandomResult {
+  patientId: number;
+  count: number;
+}
+
+export interface FilterParams {
+  location?: Location[];
+  murmur?: MurmurFilter;
+  murmurLocation?: Location[];
+  mostAudible?: Location[];
+  timing?: MurmurTiming[];
+  shape?: MurmurShape[];
+  grading?: MurmurGrading[];
+  pitch?: MurmurPitch[];
+  quality?: MurmurQuality[];
 }
