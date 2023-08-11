@@ -5,6 +5,16 @@ FROM node:18
 # Set up a new user named "user" with user ID 1000
 RUN useradd -o -u 1000 user
 
+# Install pip
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    python3.11 \
+    python3-pip
+
+# Install kaggle silently
+RUN yes | pip3 install kaggle --exists-action i --break-system-packages
+
 # Switch to the "user" user
 USER user
 
@@ -24,11 +34,12 @@ RUN npm install
 # Build client and server
 RUN export VITE_SERVER_URL=$MODEL_REPO_NAME && npm run build
 
-# Download dataset from phsionet
-RUN cd dist && mkdir data && cd data && wget -r -N -c -np https://physionet.org/files/circor-heart-sound/1.0.3/
-
-# Reset working directory
-WORKDIR $HOME/app
+# Download dataset from Kaggle
+RUN --mount=type=secret,id=KAGGLE_USERNAME,mode=0444,required=true \
+    --mount=type=secret,id=KAGGLE_KEY,mode=0444,required=true \
+    export KAGGLE_USERNAME=$(cat /run/secrets/KAGGLE_USERNAME) && \
+    export KAGGLE_KEY=$(cat /run/secrets/KAGGLE_KEY) && \
+    kaggle datasets download -d bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2 --unzip -p $HOME/app/dist/app/data
 
 EXPOSE 7860
 CMD [ "npm", "run", "start" ]
