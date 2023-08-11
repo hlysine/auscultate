@@ -19,7 +19,7 @@ import {
 } from '../types';
 import { getPatient, getRandomPatient } from './api';
 import Demographics from './Demographics';
-import AuscultationTrack from './AuscultationTrack';
+import AuscultationTrack, { RegionsLevel } from './AuscultationTrack';
 
 function filterToParams(filter: FilterParams): URLSearchParams {
   const params = new URLSearchParams();
@@ -165,13 +165,6 @@ function getMurmurDescription(patient: FullPatient): ReactNode {
   } else {
     return 'No murmur detected.';
   }
-}
-
-enum RegionsLevel {
-  None = 0,
-  Markers = 1,
-  HeartSounds = 2,
-  Full = 3,
 }
 
 export default function App(): JSX.Element {
@@ -522,7 +515,7 @@ export default function App(): JSX.Element {
               <input
                 type="range"
                 min="20"
-                max="200"
+                max="1000"
                 value={audioZoom}
                 onChange={e => setAudioZoom(Number(e.target.value))}
                 className="range range-sm min-w-[250px] w-1/4"
@@ -536,6 +529,7 @@ export default function App(): JSX.Element {
               track={track}
               zoom={audioZoom}
               spectrogram={showAnswer && spectrogram}
+              regionsLevel={showAnswer ? regionsLevel : RegionsLevel.None}
             />
           ))}
           <div className="collapse collapse-arrow bg-base-200">

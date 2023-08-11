@@ -10,3 +10,7 @@ declare module 'wavesurfer.js/plugins/spectrogram' {
   const spectrogram: any;
   export default spectrogram;
 }
+declare module 'wavesurfer.js/plugins/regions' {
+  const regions: any;
+  export default regions;
+}

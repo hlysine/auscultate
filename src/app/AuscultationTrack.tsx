@@ -1,8 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { AuscultationTrack, FullPatient, nameLocation } from '../types';
+import {
+  AuscultationTrack,
+  FullPatient,
+  SoundWave,
+  nameLocation,
+  nameSoundWave,
+} from '../types';
 import WaveSurfer from 'wavesurfer.js';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
 import TimelinePlugin from 'wavesurfer.js/plugins/timeline';
+import RegionsPlugin from 'wavesurfer.js/plugins/regions';
 import SpectrogramPlugin from 'wavesurfer.js/plugins/spectrogram';
 import { getDataUrl } from './api';
 import { useAudio } from './AudioContext';
@@ -13,6 +20,29 @@ export interface AuscultationTrackProps {
   track: AuscultationTrack;
   zoom: number;
   spectrogram: boolean;
+  regionsLevel: RegionsLevel;
+}
+
+export enum RegionsLevel {
+  None = 0,
+  Markers = 1,
+  HeartSounds = 2,
+  Full = 3,
+}
+
+function getColorByWave(wave: SoundWave): string {
+  switch (wave) {
+    case SoundWave.S1:
+      return '#f8727233';
+    case SoundWave.S2:
+      return '#3abff833';
+    case SoundWave.Diastolic:
+      return '#fbbd2333';
+    case SoundWave.Systolic:
+      return '#36d39933';
+    default:
+      return '#ffffff33';
+  }
 }
 
 export default function AuscultationTrack({
@@ -20,12 +50,15 @@ export default function AuscultationTrack({
   track,
   zoom,
   spectrogram: showSpectrogram,
+  regionsLevel,
 }: AuscultationTrackProps): JSX.Element {
   const waveformId = ('waveform' + track.audioFile).replaceAll('.', '_');
 
   const { nowPlaying, setNowPlaying } = useAudio();
 
   const wavesurfer = useRef<WaveSurfer>();
+  const regions = useRef<any>();
+  const activeRegion = useRef<any>();
   useEffect(() => {
     if (showSpectrogram) {
       const spectrogramPlugin = SpectrogramPlugin.create({
@@ -41,11 +74,68 @@ export default function AuscultationTrack({
     }
   }, [showSpectrogram]);
   useEffect(() => {
+    regions.current?.clearRegions();
+    if (regionsLevel === RegionsLevel.Full) {
+      track.segments
+        .filter(s => s.type !== SoundWave.Unknown)
+        .forEach(segment => {
+          regions.current?.addRegion({
+            start: segment.start,
+            end: segment.end,
+            color: getColorByWave(segment.type),
+            content: nameSoundWave(segment.type).substring(0, 3),
+            drag: false,
+            resize: false,
+          });
+        });
+    } else if (regionsLevel === RegionsLevel.HeartSounds) {
+      track.segments
+        .filter(s => s.type === SoundWave.S1 || s.type === SoundWave.S2)
+        .forEach(segment => {
+          regions.current?.addRegion({
+            start: segment.start,
+            end: segment.end,
+            color: getColorByWave(segment.type),
+            content: nameSoundWave(segment.type).substring(0, 3),
+            drag: false,
+            resize: false,
+          });
+        });
+    } else if (regionsLevel === RegionsLevel.Markers) {
+      track.segments
+        .filter(s => s.type === SoundWave.S1 || s.type === SoundWave.S2)
+        .forEach(segment => {
+          regions.current?.addRegion({
+            start: segment.start,
+            color: getColorByWave(segment.type),
+            content: nameSoundWave(segment.type).substring(0, 3),
+            drag: false,
+            resize: false,
+          });
+        });
+    }
+  }, [regionsLevel]);
+  useEffect(() => {
     const instance = WaveSurfer.create({
       container: '#' + waveformId,
       url: getDataUrl(track.audioFile),
       minPxPerSec: 100,
-      plugins: [HoverPlugin.create(), TimelinePlugin.create()],
+      plugins: [
+        HoverPlugin.create(),
+        TimelinePlugin.create(),
+        (regions.current = RegionsPlugin.create()),
+      ],
+    });
+    regions.current.on('region-clicked', (region: any, e: MouseEvent) => {
+      e.stopPropagation(); // prevent triggering a click on the waveform
+      activeRegion.current = region;
+      region.play();
+    });
+    regions.current.on('region-out', (region: any) => {
+      if (activeRegion.current === region) {
+        activeRegion.current = undefined;
+        instance.stop();
+      }
     });
     instance.on('play', () => {
       setNowPlaying(waveformId);

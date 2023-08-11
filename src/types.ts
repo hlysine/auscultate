@@ -186,6 +186,21 @@ export enum SoundWave {
   Unknown = 0,
 }
 
+export function nameSoundWave(wave: SoundWave): string {
+  switch (wave) {
+    case SoundWave.S1:
+      return 'S1';
+    case SoundWave.Systolic:
+      return 'Systolic';
+    case SoundWave.S2:
+      return 'S2';
+    case SoundWave.Diastolic:
+      return 'Diastolic';
+    case SoundWave.Unknown:
+      return 'Unknown';
+  }
+}
+
 export interface SoundSegment {
   start: number;
   end: number;
