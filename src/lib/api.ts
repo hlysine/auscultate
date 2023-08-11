@@ -1,7 +1,7 @@
 import express from 'express';
 import { z } from 'zod';
 import { validate, wrap } from './helper';
-import { patients } from './data';
+import { patients, readAuscultation } from './data';
 import { notFound } from '@hapi/boom';
 import {
   Location,
@@ -180,7 +180,11 @@ router.get(
     if (!patient) {
       throw notFound(`Patient ${id} not found`);
     }
-    res.status(200).json(patient);
+    const auscultation = await readAuscultation(patient.patientId);
+    res.status(200).json({
+      ...patient,
+      ...auscultation,
+    });
   })
 );
 

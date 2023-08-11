@@ -100,3 +100,29 @@ export interface Patient {
   campaign: Campaign;
   additionalId: number | null;
 }
+
+export enum SoundWave {
+  S1 = 1,
+  Systolic = 2,
+  S2 = 3,
+  Diastolic = 4,
+  Unknown = 0,
+}
+
+export interface SoundSegment {
+  start: number;
+  end: number;
+  type: SoundWave;
+}
+
+export interface AuscultationTrack {
+  location: Location;
+  headerFile: string;
+  audioFile: string;
+  segments: SoundSegment[];
+}
+
+export interface Auscultation {
+  patientId: number;
+  tracks: AuscultationTrack[];
+}

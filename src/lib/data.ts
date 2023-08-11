@@ -1,6 +1,6 @@
 import { parse } from '@vanillaes/csv';
 import fs from 'fs/promises';
-import { Patient, getTiming } from '../types';
+import { Auscultation, Location, Patient, getTiming } from '../types';
 
 const DATA_DIR = 'dist/app/data/';
 
@@ -48,4 +48,47 @@ export async function readPatients(): Promise<void> {
     campaign: row[20],
     additionalId: row[21] === 'nan' ? null : parseInt(row[21], 10),
   }));
+}
+
+export async function readAuscultation(
+  patientId: number
+): Promise<Auscultation> {
+  const data = await fs.readFile(
+    DATA_DIR + `training_data/training_data/${patientId}.txt`,
+    {
+      encoding: 'utf8',
+    }
+  );
+  const lines = data.split(/\r?\n/);
+  const auscultation: Auscultation = {
+    patientId,
+    tracks: [],
+  };
+  const trackCount = parseInt(lines[0].split(' ')[1], 10);
+  for (let i = 1; i <= trackCount; i++) {
+    const [location, headerFile, audioFile, segmentsFile] = lines[i].split(' ');
+    const segments = await fs.readFile(
+      DATA_DIR + `training_data/training_data/${segmentsFile}`,
+      {
+        encoding: 'utf8',
+      }
+    );
+    const segmentLines = segments.split(/\r?\n/);
+    auscultation.tracks.push({
+      location: location as Location,
+      headerFile,
+      audioFile,
+      segments: segmentLines
+        .map(line => {
+          const [start, end, type] = line.split(/\t/);
+          return {
+            start: parseFloat(start),
+            end: parseFloat(end),
+            type: parseInt(type, 10),
+          };
+        })
+        .filter(s => !Number.isNaN(s.start)),
+    });
+  }
+  return auscultation;
 }
