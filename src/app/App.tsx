@@ -10,6 +10,9 @@ import {
   MurmurQuality,
   MurmurShape,
   MurmurTiming,
+  nameLocation,
+  nameMurmur,
+  nameTiming,
 } from '../types';
 import { getPatient, getRandomPatient } from './api';
 
@@ -124,6 +127,26 @@ function App(): JSX.Element {
     setPatientId(null);
   };
 
+  const arrayToggle = <T extends string>(
+    array: Exclude<keyof FilterParams, 'murmur'>,
+    value: T,
+    checked: boolean
+  ): void => {
+    setFilterParams(f => {
+      if (checked) {
+        return {
+          ...f,
+          [array]: [...(f[array] ?? []), value],
+        };
+      } else {
+        return {
+          ...f,
+          [array]: (f[array] as string[] | null)?.filter(v => v !== value),
+        };
+      }
+    });
+  };
+
   return (
     <div className="p-8 flex flex-col gap-2">
       <p className="text-3xl">Auscultation Database</p>
@@ -132,6 +155,104 @@ function App(): JSX.Element {
         Phonocardiogram Dataset.
       </p>
       <div className="bg-base-200 p-4">
+        <div className="divider">Auscultation location</div>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {Object.values(Location).map(loc => (
+            <div className="form-control">
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="checkbox"
+                  checked={filterParams.location?.includes(loc)}
+                  onChange={e => arrayToggle('location', loc, e.target.checked)}
+                  className="checkbox"
+                />
+                <span className="label-text">{nameLocation(loc)}</span>
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="divider">Murmur Type</div>
+        <div className="flex flex-wrap gap-4 justify-center">
+          <div className="form-control">
+            <label className="label cursor-pointer gap-2">
+              <input
+                type="radio"
+                className="radio"
+                checked={!filterParams.murmur}
+                onChange={e => {
+                  if (e.target.checked) {
+                    setFilterParams(f => ({ ...f, murmur: undefined }));
+                  }
+                }}
+              />
+              <span className="label-text">No filter</span>
+            </label>
+          </div>
+          {Object.values(MurmurFilter).map(filter => (
+            <div className="form-control">
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="radio"
+                  className="radio"
+                  checked={filterParams.murmur === filter}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setFilterParams(f => ({ ...f, murmur: filter }));
+                    }
+                  }}
+                />
+                <span className="label-text">{nameMurmur(filter)}</span>
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="divider">Murmur location</div>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {Object.values(Location).map(loc => (
+            <div className="form-control">
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="checkbox"
+                  checked={filterParams.murmurLocation?.includes(loc)}
+                  onChange={e =>
+                    arrayToggle('murmurLocation', loc, e.target.checked)
+                  }
+                  className="checkbox"
+                />
+                <span className="label-text">{nameLocation(loc)}</span>
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="divider">Murmur Timing</div>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {Object.values(MurmurTiming).map(loc => (
+            <div className="form-control">
+              <label className="label cursor-pointer gap-2">
+                <input
+                  type="checkbox"
+                  checked={filterParams.timing?.includes(loc)}
+                  onChange={e => arrayToggle('timing', loc, e.target.checked)}
+                  className="checkbox"
+                />
+                <span className="label-text">
+                  {nameTiming(
+                    loc,
+                    ['systolic', 'diastolic'].includes(
+                      filterParams.murmur ?? ''
+                    )
+                      ? (filterParams.murmur as 'systolic' | 'diastolic')
+                      : 'general'
+                  )}
+                </span>
+              </label>
+            </div>
+          ))}
+        </div>
+
         <button className="btn btn-primary" onClick={randomClicked}>
           Random Patient
         </button>

@@ -22,10 +22,23 @@ export function nameLocation(location: Location) {
 }
 
 export enum MurmurFilter {
-  Systolic = 'systolic',
-  Diastolic = 'diastolic',
   None = 'none',
   Any = 'any',
+  Systolic = 'systolic',
+  Diastolic = 'diastolic',
+}
+
+export function nameMurmur(murmur: MurmurFilter): string {
+  switch (murmur) {
+    case MurmurFilter.Systolic:
+      return 'Systolic murmur';
+    case MurmurFilter.Diastolic:
+      return 'Diastolic murmur';
+    case MurmurFilter.None:
+      return 'No murmur';
+    case MurmurFilter.Any:
+      return 'Has murmur';
+  }
 }
 
 export enum Age {
