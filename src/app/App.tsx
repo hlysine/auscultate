@@ -264,7 +264,7 @@ export default function App(): JSX.Element {
 
   return (
     <div className="p-8 flex flex-col gap-2">
-      <p className="text-3xl text-center">Auscultation Database</p>
+      <p className="text-3xl text-center">Heart Sounds Database</p>
       <p className="text-center">
         Filter and access heart sounds from the CirCor DigiScope Phonocardiogram
         Dataset.
