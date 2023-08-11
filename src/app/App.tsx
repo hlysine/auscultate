@@ -16,6 +16,8 @@ import {
   nameTiming,
 } from '../types';
 import { getPatient, getRandomPatient } from './api';
+import Demographics from './Demographics';
+import AuscultationTrack from './AuscultationTrack';
 
 function filterToParams(filter: FilterParams): URLSearchParams {
   const params = new URLSearchParams();
@@ -81,7 +83,7 @@ function paramsToFilter(params: URLSearchParams): FilterParams {
   return newFilter;
 }
 
-function App(): JSX.Element {
+export default function App(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [patientId, setPatientId] = useState<number | null>(null);
@@ -403,16 +405,27 @@ function App(): JSX.Element {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>
-            An error occurred while loading the patient:
-            <br />
-            {error}
-          </span>
+          <div>
+            <h3 className="font-bold">
+              An error occurred while loading the patient
+            </h3>
+            <div className="text-xs">{error}</div>
+          </div>
         </div>
       )}
-      {patient === null ? null : <p>{JSON.stringify(patient, undefined, 2)}</p>}
+      <div className="divider"></div>
+      {patient === null ? null : (
+        <div>
+          <Demographics patient={patient} />
+          {patient.tracks.map(track => (
+            <AuscultationTrack
+              key={track.audioFile}
+              patient={patient}
+              track={track}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-
-export default App;
