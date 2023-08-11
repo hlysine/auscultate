@@ -149,12 +149,12 @@ function App(): JSX.Element {
 
   return (
     <div className="p-8 flex flex-col gap-2">
-      <p className="text-3xl">Auscultation Database</p>
-      <p>
+      <p className="text-3xl text-center">Auscultation Database</p>
+      <p className="text-center">
         Filter and access auscultation sound tracks from the CirCor DigiScope
         Phonocardiogram Dataset.
       </p>
-      <div className="bg-base-200 p-4">
+      <div className="bg-base-200 p-4 flex flex-col items-center">
         <div className="divider">Auscultation location</div>
         <div className="flex flex-wrap gap-4 justify-center">
           {Object.values(Location).map(loc => (
@@ -253,7 +253,7 @@ function App(): JSX.Element {
           ))}
         </div>
 
-        <button className="btn btn-primary" onClick={randomClicked}>
+        <button className="btn btn-primary mt-8" onClick={randomClicked}>
           Random Patient
         </button>
       </div>
