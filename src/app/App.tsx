@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   FilterParams,
   FullPatient,
   Location,
+  Murmur,
   MurmurFilter,
   MurmurGrading,
   MurmurPitch,
   MurmurQuality,
   MurmurShape,
+  MurmurStatus,
   MurmurTiming,
   nameGrading,
   nameLocation,
@@ -83,6 +85,88 @@ function paramsToFilter(params: URLSearchParams): FilterParams {
   return newFilter;
 }
 
+function getSingleMurmurDescription(
+  murmur: Murmur,
+  type: 'systolic' | 'diastolic',
+  capitalize: boolean
+): ReactNode {
+  return (
+    <>
+      {capitalize ? 'A' : 'a'}{' '}
+      <kbd className="kbd">{murmur.pitch.toLocaleLowerCase()}-pitched</kbd>{' '}
+      <kbd className="kbd">
+        {nameTiming(murmur.timing, type).toLocaleLowerCase()}
+      </kbd>{' '}
+      <kbd className="kbd">{murmur.quality.toLocaleLowerCase()}</kbd> murmur of
+      grade <kbd className="kbd">{nameGrading(murmur.grading, type)}</kbd>
+    </>
+  );
+}
+
+function getMurmurDescription(patient: FullPatient): ReactNode {
+  if (patient.murmur === MurmurStatus.Unknown) {
+    return 'Murmur status unknown.';
+  } else if (patient.systolicMurmur && patient.diastolicMurmur) {
+    const systolic = getSingleMurmurDescription(
+      patient.systolicMurmur,
+      'systolic',
+      true
+    );
+    const diastolic = getSingleMurmurDescription(
+      patient.diastolicMurmur,
+      'diastolic',
+      false
+    );
+    return (
+      <>
+        {systolic} and <br />
+        {diastolic}
+        {patient.mostAudible ? (
+          <>
+            , best heard at{' '}
+            <kbd className="kbd">
+              {nameLocation(patient.mostAudible).toLocaleLowerCase()}
+            </kbd>
+          </>
+        ) : null}
+        .
+      </>
+    );
+  } else if (patient.systolicMurmur) {
+    return (
+      <>
+        {getSingleMurmurDescription(patient.systolicMurmur, 'systolic', true)}
+        {patient.mostAudible ? (
+          <>
+            , best heard at{' '}
+            <kbd className="kbd">
+              {nameLocation(patient.mostAudible).toLocaleLowerCase()}
+            </kbd>
+          </>
+        ) : null}
+        .
+      </>
+    );
+  } else if (patient.diastolicMurmur) {
+    return (
+      <>
+        {getSingleMurmurDescription(patient.diastolicMurmur, 'diastolic', true)}
+        {patient.mostAudible ? (
+          <>
+            , best heard at{' '}
+            <kbd className="kbd">
+              {nameLocation(patient.mostAudible).toLocaleLowerCase()}
+            </kbd>
+          </>
+        ) : null}
+        .
+      </>
+    );
+  } else {
+    return 'No murmur detected.';
+  }
+}
+
 export default function App(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -94,6 +178,8 @@ export default function App(): JSX.Element {
   const [patient, setPatient] = useState<FullPatient | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [audioZoom, setAudioZoom] = useState(100);
 
   const getRandom = () => {
     setLoading(true);
@@ -417,13 +503,44 @@ export default function App(): JSX.Element {
       {patient === null ? null : (
         <div>
           <Demographics patient={patient} />
+          <div className="flex gap-4 my-4 justify-end flex-wrap">
+            <div className="flex items-center gap-2">
+              <span>Zoom: </span>
+              <input
+                type="range"
+                min="20"
+                max="200"
+                value={audioZoom}
+                onChange={e => setAudioZoom(Number(e.target.value))}
+                className="range range-sm min-w-[250px] w-1/4"
+              />
+            </div>
+          </div>
           {patient.tracks.map(track => (
             <AuscultationTrack
               key={track.audioFile}
               patient={patient}
               track={track}
+              zoom={audioZoom}
             />
           ))}
+          <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              Heart Sound Analysis
+            </div>
+            <div className="collapse-content">
+              <p className="mb-4 text-lg">{getMurmurDescription(patient)}</p>
+              <p>
+                All audible locations:{' '}
+                {patient.murmurLocations.map(loc => (
+                  <kbd className="kbd" key={loc}>
+                    {nameLocation(loc)}
+                  </kbd>
+                ))}
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </div>

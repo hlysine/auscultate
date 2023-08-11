@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './globals.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AudioContext } from './AudioContext';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,8 @@ const container = document.querySelector('#root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AudioContext>
+      <RouterProvider router={router} />
+    </AudioContext>
   </React.StrictMode>
 );
