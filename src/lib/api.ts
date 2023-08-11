@@ -20,48 +20,50 @@ router.get(
     const { query } = await validate(
       req,
       z.object({
-        query: z.object({
-          location: z
-            .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
-            .optional(),
-          murmur: z.enum(['systolic', 'diastolic', 'any', 'none']).optional(),
-          murmurLocation: z
-            .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
-            .optional(),
-          mostAudible: z
-            .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
-            .optional(),
-          timing: z
-            .union([
-              z.nativeEnum(MurmurTiming),
-              z.array(z.nativeEnum(MurmurTiming)),
-            ])
-            .optional(),
-          shape: z
-            .union([
-              z.nativeEnum(MurmurShape),
-              z.array(z.nativeEnum(MurmurShape)),
-            ])
-            .optional(),
-          grading: z
-            .union([
-              z.nativeEnum(MurmurGrading),
-              z.array(z.nativeEnum(MurmurGrading)),
-            ])
-            .optional(),
-          pitch: z
-            .union([
-              z.nativeEnum(MurmurPitch),
-              z.array(z.nativeEnum(MurmurPitch)),
-            ])
-            .optional(),
-          quality: z
-            .union([
-              z.nativeEnum(MurmurQuality),
-              z.array(z.nativeEnum(MurmurQuality)),
-            ])
-            .optional(),
-        }),
+        query: z
+          .object({
+            location: z
+              .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
+              .optional(),
+            murmur: z.enum(['systolic', 'diastolic', 'any', 'none']).optional(),
+            murmurLocation: z
+              .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
+              .optional(),
+            mostAudible: z
+              .union([z.nativeEnum(Location), z.array(z.nativeEnum(Location))])
+              .optional(),
+            timing: z
+              .union([
+                z.nativeEnum(MurmurTiming),
+                z.array(z.nativeEnum(MurmurTiming)),
+              ])
+              .optional(),
+            shape: z
+              .union([
+                z.nativeEnum(MurmurShape),
+                z.array(z.nativeEnum(MurmurShape)),
+              ])
+              .optional(),
+            grading: z
+              .union([
+                z.nativeEnum(MurmurGrading),
+                z.array(z.nativeEnum(MurmurGrading)),
+              ])
+              .optional(),
+            pitch: z
+              .union([
+                z.nativeEnum(MurmurPitch),
+                z.array(z.nativeEnum(MurmurPitch)),
+              ])
+              .optional(),
+            quality: z
+              .union([
+                z.nativeEnum(MurmurQuality),
+                z.array(z.nativeEnum(MurmurQuality)),
+              ])
+              .optional(),
+          })
+          .strict(),
       })
     );
     let filtered = patients.slice();
@@ -167,9 +169,11 @@ router.get(
     } = await validate(
       req,
       z.object({
-        query: z.object({
-          id: z.string(),
-        }),
+        query: z
+          .object({
+            id: z.string(),
+          })
+          .strict(),
       })
     );
     const patient = patients.find(p => p.patientId === parseInt(id));
