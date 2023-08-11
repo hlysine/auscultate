@@ -1,6 +1,12 @@
 import { parse } from '@vanillaes/csv';
 import fs from 'fs/promises';
-import { Auscultation, Location, Patient, getTiming } from '../types';
+import {
+  Auscultation,
+  Location,
+  Patient,
+  getGrading,
+  getTiming,
+} from '../types';
 
 const DATA_DIR = 'dist/app/data/';
 
@@ -31,7 +37,7 @@ export async function readPatients(): Promise<void> {
         : {
             timing: getTiming(row[10]),
             shape: row[11],
-            grading: row[12],
+            grading: getGrading(row[12]),
             pitch: row[13],
             quality: row[14],
           },
@@ -41,7 +47,7 @@ export async function readPatients(): Promise<void> {
         : {
             timing: getTiming(row[15]),
             shape: row[16],
-            grading: row[17],
+            grading: getGrading(row[17]),
             pitch: row[18],
             quality: row[19],
           },

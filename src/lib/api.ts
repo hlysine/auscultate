@@ -6,16 +6,44 @@ import { notFound } from '@hapi/boom';
 import {
   FullPatient,
   Location,
+  Murmur,
   MurmurFilter,
   MurmurGrading,
   MurmurPitch,
   MurmurQuality,
   MurmurShape,
   MurmurTiming,
+  Patient,
   RandomResult,
 } from '../types';
 
 const router = express.Router();
+
+function filterMurmurProp<T extends keyof Murmur>(
+  patient: Patient,
+  filter: MurmurFilter | undefined,
+  propName: T,
+  options: Murmur[T][]
+): boolean {
+  if (filter === MurmurFilter.Systolic) {
+    return (
+      !!patient.systolicMurmur &&
+      options.includes(patient.systolicMurmur[propName])
+    );
+  } else if (filter === MurmurFilter.Diastolic) {
+    return (
+      !!patient.diastolicMurmur &&
+      options.includes(patient.diastolicMurmur[propName])
+    );
+  } else {
+    return (
+      (!!patient.systolicMurmur &&
+        options.includes(patient.systolicMurmur[propName])) ||
+      (!!patient.diastolicMurmur &&
+        options.includes(patient.diastolicMurmur[propName]))
+    );
+  }
+}
 
 router.get(
   '/patient/random',
@@ -111,46 +139,36 @@ router.get(
       const timings = Array.isArray(query.timing)
         ? query.timing
         : [query.timing];
-      filtered = filtered.filter(
-        p =>
-          (p.systolicMurmur && timings.includes(p.systolicMurmur.timing)) ||
-          (p.diastolicMurmur && timings.includes(p.diastolicMurmur.timing))
+      filtered = filtered.filter(p =>
+        filterMurmurProp(p, query.murmur, 'timing', timings)
       );
     }
     if (query.shape) {
       const shapes = Array.isArray(query.shape) ? query.shape : [query.shape];
-      filtered = filtered.filter(
-        p =>
-          (p.systolicMurmur && shapes.includes(p.systolicMurmur.shape)) ||
-          (p.diastolicMurmur && shapes.includes(p.diastolicMurmur.shape))
+      filtered = filtered.filter(p =>
+        filterMurmurProp(p, query.murmur, 'shape', shapes)
       );
     }
     if (query.grading) {
       const gradings = Array.isArray(query.grading)
         ? query.grading
         : [query.grading];
-      filtered = filtered.filter(
-        p =>
-          (p.systolicMurmur && gradings.includes(p.systolicMurmur.grading)) ||
-          (p.diastolicMurmur && gradings.includes(p.diastolicMurmur.grading))
+      filtered = filtered.filter(p =>
+        filterMurmurProp(p, query.murmur, 'grading', gradings)
       );
     }
     if (query.pitch) {
       const pitches = Array.isArray(query.pitch) ? query.pitch : [query.pitch];
-      filtered = filtered.filter(
-        p =>
-          (p.systolicMurmur && pitches.includes(p.systolicMurmur.pitch)) ||
-          (p.diastolicMurmur && pitches.includes(p.diastolicMurmur.pitch))
+      filtered = filtered.filter(p =>
+        filterMurmurProp(p, query.murmur, 'pitch', pitches)
       );
     }
     if (query.quality) {
       const qualities = Array.isArray(query.quality)
         ? query.quality
         : [query.quality];
-      filtered = filtered.filter(
-        p =>
-          (p.systolicMurmur && qualities.includes(p.systolicMurmur.quality)) ||
-          (p.diastolicMurmur && qualities.includes(p.diastolicMurmur.quality))
+      filtered = filtered.filter(p =>
+        filterMurmurProp(p, query.murmur, 'quality', qualities)
       );
     }
     if (filtered.length === 0) {

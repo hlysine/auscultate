@@ -10,6 +10,7 @@ import {
   MurmurQuality,
   MurmurShape,
   MurmurTiming,
+  nameGrading,
   nameLocation,
   nameMurmur,
   nameTiming,
@@ -84,43 +85,63 @@ function App(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [patientId, setPatientId] = useState<number | null>(null);
-  const [resultCount, setResultCount] = useState<number>(0);
+  const [resultCount, setResultCount] = useState<number>(-1);
 
   const [filterParams, setFilterParams] = useState<FilterParams>({});
 
   const [patient, setPatient] = useState<FullPatient | null>(null);
-
-  useEffect(() => {
-    if (searchParams.has('id')) {
-      setPatientId(Number(searchParams.get('id')));
-    }
-    setFilterParams(paramsToFilter(searchParams));
-  }, [searchParams]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getRandom = () => {
-    getRandomPatient(filterParams).then(result => {
-      setPatientId(result.patientId);
-      setResultCount(result.count);
-      setSearchParams(p => {
-        p.set('id', result.patientId.toString());
-        return p;
+    setLoading(true);
+    getRandomPatient(filterParams)
+      .then(result => {
+        setPatientId(result.patientId);
+        setResultCount(result.count);
+        setSearchParams(p => {
+          p.set('id', result.patientId.toString());
+          return p;
+        });
+      })
+      .catch(err => {
+        if (err.response.status === 404) {
+          setResultCount(0);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   };
 
   const loadPatient = () => {
-    getPatient(patientId!).then(patient => {
-      setPatient(patient);
-    });
+    setLoading(true);
+    getPatient(patientId!)
+      .then(patient => {
+        setPatient(patient);
+        setError(null);
+      })
+      .catch(err => {
+        setPatient(null);
+        setError(err.response.data.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
+    setFilterParams(paramsToFilter(searchParams));
     if (patientId === null) {
-      getRandom();
+      if (searchParams.has('id')) {
+        setPatientId(Number(searchParams.get('id')));
+      } else {
+        getRandom();
+      }
     } else {
       loadPatient();
     }
-  }, [patientId]);
+  }, [searchParams, patientId]);
 
   const randomClicked = () => {
     setSearchParams(filterToParams(filterParams));
@@ -154,111 +175,242 @@ function App(): JSX.Element {
         Filter and access auscultation sound tracks from the CirCor DigiScope
         Phonocardiogram Dataset.
       </p>
-      <div className="bg-base-200 p-4 flex flex-col items-center">
-        <div className="divider">Auscultation location</div>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {Object.values(Location).map(loc => (
-            <div className="form-control">
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="checkbox"
-                  checked={filterParams.location?.includes(loc)}
-                  onChange={e => arrayToggle('location', loc, e.target.checked)}
-                  className="checkbox"
-                />
-                <span className="label-text">{nameLocation(loc)}</span>
-              </label>
-            </div>
-          ))}
+      <div className="collapse bg-base-200 my-4">
+        <input type="checkbox" />
+        <div className="collapse-title text-xl font-medium">Select Filters</div>
+        <div className="collapse-content">
+          <form className="bg-base-200 p-4 pt-0 flex flex-col items-center w-full">
+            <fieldset className="w-full" disabled={loading}>
+              <div className="divider">Auscultation location</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(Location).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.location?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('location', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">{nameLocation(loc)}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Type</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <div className="form-control">
+                  <label className="label cursor-pointer gap-2">
+                    <input
+                      type="radio"
+                      className="radio"
+                      checked={!filterParams.murmur}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setFilterParams(f => ({ ...f, murmur: undefined }));
+                        }
+                      }}
+                    />
+                    <span className="label-text">No filter</span>
+                  </label>
+                </div>
+                {Object.values(MurmurFilter).map(filter => (
+                  <div key={filter} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="radio"
+                        className="radio"
+                        checked={filterParams.murmur === filter}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setFilterParams(f => ({ ...f, murmur: filter }));
+                          }
+                        }}
+                      />
+                      <span className="label-text">{nameMurmur(filter)}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur location</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(Location).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={
+                          filterParams.murmurLocation?.includes(loc) ?? false
+                        }
+                        onChange={e =>
+                          arrayToggle('murmurLocation', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">{nameLocation(loc)}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Timing</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(MurmurTiming).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.timing?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('timing', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">
+                        {nameTiming(
+                          loc,
+                          ['systolic', 'diastolic'].includes(
+                            filterParams.murmur ?? ''
+                          )
+                            ? (filterParams.murmur as 'systolic' | 'diastolic')
+                            : 'general'
+                        )}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Shape</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(MurmurShape).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.shape?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('shape', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">{loc}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Grading</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(MurmurGrading).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.grading?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('grading', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">
+                        {nameGrading(
+                          loc,
+                          ['systolic', 'diastolic'].includes(
+                            filterParams.murmur ?? ''
+                          )
+                            ? (filterParams.murmur as 'systolic' | 'diastolic')
+                            : 'general'
+                        )}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Pitch</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(MurmurPitch).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.pitch?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('pitch', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">{loc}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="divider">Murmur Quality</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.values(MurmurQuality).map(loc => (
+                  <div key={loc} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filterParams.quality?.includes(loc) ?? false}
+                        onChange={e =>
+                          arrayToggle('quality', loc, e.target.checked)
+                        }
+                        className="checkbox"
+                      />
+                      <span className="label-text">{loc}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
+          </form>
         </div>
 
-        <div className="divider">Murmur Type</div>
-        <div className="flex flex-wrap gap-4 justify-center">
-          <div className="form-control">
-            <label className="label cursor-pointer gap-2">
-              <input
-                type="radio"
-                className="radio"
-                checked={!filterParams.murmur}
-                onChange={e => {
-                  if (e.target.checked) {
-                    setFilterParams(f => ({ ...f, murmur: undefined }));
-                  }
-                }}
-              />
-              <span className="label-text">No filter</span>
-            </label>
-          </div>
-          {Object.values(MurmurFilter).map(filter => (
-            <div className="form-control">
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="radio"
-                  className="radio"
-                  checked={filterParams.murmur === filter}
-                  onChange={e => {
-                    if (e.target.checked) {
-                      setFilterParams(f => ({ ...f, murmur: filter }));
-                    }
-                  }}
-                />
-                <span className="label-text">{nameMurmur(filter)}</span>
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <div className="divider">Murmur location</div>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {Object.values(Location).map(loc => (
-            <div className="form-control">
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="checkbox"
-                  checked={filterParams.murmurLocation?.includes(loc)}
-                  onChange={e =>
-                    arrayToggle('murmurLocation', loc, e.target.checked)
-                  }
-                  className="checkbox"
-                />
-                <span className="label-text">{nameLocation(loc)}</span>
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <div className="divider">Murmur Timing</div>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {Object.values(MurmurTiming).map(loc => (
-            <div className="form-control">
-              <label className="label cursor-pointer gap-2">
-                <input
-                  type="checkbox"
-                  checked={filterParams.timing?.includes(loc)}
-                  onChange={e => arrayToggle('timing', loc, e.target.checked)}
-                  className="checkbox"
-                />
-                <span className="label-text">
-                  {nameTiming(
-                    loc,
-                    ['systolic', 'diastolic'].includes(
-                      filterParams.murmur ?? ''
-                    )
-                      ? (filterParams.murmur as 'systolic' | 'diastolic')
-                      : 'general'
-                  )}
-                </span>
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <button className="btn btn-primary mt-8" onClick={randomClicked}>
-          Random Patient
+        <button
+          className="btn btn-primary"
+          onClick={randomClicked}
+          disabled={loading}
+        >
+          {loading ? (
+            <span className="loading loading-spinner loading-sm"></span>
+          ) : (
+            'Random Patient'
+          )}
         </button>
       </div>
-      <p>{resultCount} patients with the selected filters.</p>
-      <p>{JSON.stringify(patient, undefined, 2)}</p>
+      {resultCount < 0 ? null : (
+        <p>{resultCount} patients with the selected filters.</p>
+      )}
+      {error === null ? null : (
+        <div className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>
+            An error occurred while loading the patient:
+            <br />
+            {error}
+          </span>
+        </div>
+      )}
+      {patient === null ? null : <p>{JSON.stringify(patient, undefined, 2)}</p>}
     </div>
   );
 }

@@ -110,9 +110,36 @@ export enum MurmurPitch {
 }
 
 export enum MurmurGrading {
-  Grade1 = 'I/VI',
-  Grade2 = 'II/VI',
-  Grade3 = 'III/VI',
+  Grade1 = 'I',
+  Grade2 = 'II',
+  Grade3 = 'III',
+}
+
+export function nameGrading(
+  grading: MurmurGrading,
+  type: 'systolic' | 'diastolic' | 'general' = 'general'
+) {
+  if (type === 'general') {
+    return grading;
+  } else if (type === 'systolic') {
+    return grading + '/VI';
+  } else if (type === 'diastolic') {
+    return grading + '/IV';
+  } else {
+    throw new Error(`Unknown type: ${type}`);
+  }
+}
+
+export function getGrading(desc: string): MurmurGrading {
+  if (desc.startsWith(MurmurGrading.Grade3)) {
+    return MurmurGrading.Grade3;
+  } else if (desc.startsWith(MurmurGrading.Grade2)) {
+    return MurmurGrading.Grade2;
+  } else if (desc.startsWith(MurmurGrading.Grade1)) {
+    return MurmurGrading.Grade1;
+  } else {
+    throw new Error(`Unknown grading: ${desc}`);
+  }
 }
 
 export enum MurmurQuality {
