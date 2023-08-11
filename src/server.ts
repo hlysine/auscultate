@@ -3,11 +3,15 @@ import express, { Request, Response, NextFunction } from 'express';
 import api from './lib/api';
 import { readPatients, patients } from './lib/data';
 import path from 'path';
+import cors from 'cors';
 import { isBoom } from '@hapi/boom';
 
 const { PORT = 7860 } = process.env;
 
 const app = express();
+
+// Enable cross-origin resource sharing
+app.use(cors());
 
 // Middleware that parses json and looks at requests where the Content-Type header matches the type option.
 app.use(express.json());

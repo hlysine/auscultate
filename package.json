@@ -22,6 +22,7 @@
     "@babel/core": "^7.22.10",
     "@babel/node": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.4.9",
     "@types/react": "^18.2.20",
@@ -47,6 +48,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@vanillaes/csv": "^3.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "react": "^18.2.0",
