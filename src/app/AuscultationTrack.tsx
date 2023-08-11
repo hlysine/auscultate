@@ -27,7 +27,7 @@ export default function AuscultationTrack({
   }, []);
 
   return (
-    <div className="flex gap-4 m-4">
+    <div className="flex gap-4 m-4 flex-wrap justify-center">
       <div className="flex flex-col w-32">
         <span className="text-xl text-center flex-1">
           {nameLocation(track.location)}
@@ -36,7 +36,7 @@ export default function AuscultationTrack({
           {wavesurfer.current?.isPlaying() ? 'Pause' : 'Play'}
         </button>
       </div>
-      <div id={waveformId} className="flex-1"></div>
+      <div id={waveformId} className="flex-1 min-w-[250px]"></div>
     </div>
   );
 }
