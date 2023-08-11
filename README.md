@@ -7,77 +7,21 @@ sdk: docker
 pinned: false
 ---
 
-# Vite Boilerplate
+# auscultate
 
-> Quickly bootstrap a new project with Vite Boilerplate.
+A single-page web app presenting heart sounds from the CirCor DigiScope Phonocardiogram dataset.
 
-This boilerplate contains all the tools you need to build a modern web app with TypeScript, React, Vite, Storybook and Express.  
-You can use it to quickly bootstrap your project.
+[![Open auscultate on HF Spaces](https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-xl-dark.svg)](https://lysine-auscultate.hf.space/)
 
-ESLint, stylelint, prettier, husky and lintstaged are configured to give you a solid development experience.
+This app features over 900 patients from the dataset. You can load a random case after setting your filters.
+Heart sounds from different auscultation locations are presented, wtih the diagnosis and sound annotations visualized.
 
-## Installing / Developing
+## License
 
-First, [create a repository from this template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/creating-a-repository-from-a-template).
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Now you are ready to go:
+## Acknowledgments
 
-```shell
-npm install
-```
-
-This will install the dependencies required to run the boilerplate.
-
-```shell
-npm run dev
-```
-
-Boom! These scripts run your server, client and storybook in development mode.
-
-The default PORTS are:
-
-- `7860` for the server
-- `3000` for the client
-- `6006` for the storybook
-
-If you don't like to call all scripts at once, you can also run:
-
-```shell
-npm run server:dev
-npm run client:dev
-npm run storybook
-```
-
-You can configure the server port by setting the `PORT` environment variable. Creating a `.env` file is supported. You can copy `.env.example` to `.env`.
-
-| KEY  | VALUE                                                         |
-| ---- | ------------------------------------------------------------- |
-| PORT | (Optional) Port for the server environment (defaults to 7860) |
-
-## Building
-
-To build the project, run:
-
-```shell
-npm run build
-```
-
-This will build the client, server and storybook.
-
-```shell
-npm start
-```
-
-In production, you have a single server serving everything.
-
-`/api/*` is the API endpoint.  
-`/storybook` is the Storybook.  
-`/*` is the client.
-
-## Tests
-
-A test runner is not installed (right now). But TypeScript, linter and prettier are checked on commit and push thanks to husky and lintstaged.
-
-## Licensing
-
-MIT
+* Thanks [The CirCor DigiScope Phonocardiogram Dataset](https://www.kaggle.com/datasets/bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2) for providing quality heart sound data.
+* Thanks [kaggle](https://www.kaggle.com/) for hosting the dataset and providing convenient tools to download it.
+* Thanks [Hugging Face](https://huggingface.co/) for hosting the app online for free.
