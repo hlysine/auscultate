@@ -25,7 +25,7 @@ RUN npm install
 RUN export VITE_SERVER_URL=$MODEL_REPO_NAME && npm run build
 
 # Download dataset from phsionet
-RUN cd dist && mkdir data && cd data && wget -r -N -c -np -nv https://physionet.org/files/circor-heart-sound/1.0.3/
+RUN cd dist && mkdir data && cd data && wget -r -N -c -np https://physionet.org/files/circor-heart-sound/1.0.3/
 
 # Reset working directory
 WORKDIR $HOME/app
