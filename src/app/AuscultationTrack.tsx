@@ -136,7 +136,7 @@ export default function AuscultationTrack({
     regions.current.on('region-out', (region: any) => {
       if (activeRegion.current === region) {
         activeRegion.current = undefined;
-        instance.stop();
+        instance.pause();
       }
     });
     instance.on('play', () => {
