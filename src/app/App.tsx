@@ -93,7 +93,9 @@ function getSingleMurmurDescription(
   return (
     <>
       {capitalize ? 'A' : 'a'}{' '}
-      <kbd className="kbd">{murmur.pitch.toLocaleLowerCase()}-pitched</kbd>{' '}
+      <kbd className="kbd">{murmur.pitch.toLocaleLowerCase()}-pitched</kbd>
+      {', '}
+      <kbd className="kbd">{murmur.shape.toLocaleLowerCase()}</kbd>{' '}
       <kbd className="kbd">
         {nameTiming(murmur.timing, type).toLocaleLowerCase()}
       </kbd>{' '}
