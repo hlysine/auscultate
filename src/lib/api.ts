@@ -12,6 +12,7 @@ import {
   MurmurPitch,
   MurmurQuality,
   MurmurShape,
+  MurmurStatus,
   MurmurTiming,
   Patient,
   RandomResult,
@@ -107,16 +108,16 @@ router.get(
       );
     }
     if (query.murmur) {
-      if (query.murmur === 'systolic') {
+      if (query.murmur === MurmurFilter.Systolic) {
         filtered = filtered.filter(p => p.systolicMurmur);
-      } else if (query.murmur === 'diastolic') {
+      } else if (query.murmur === MurmurFilter.Diastolic) {
         filtered = filtered.filter(p => p.diastolicMurmur);
-      } else if (query.murmur === 'none') {
-        filtered = filtered.filter(
-          p => !p.systolicMurmur && !p.diastolicMurmur
-        );
-      } else if (query.murmur === 'any') {
+      } else if (query.murmur === MurmurFilter.None) {
+        filtered = filtered.filter(p => p.murmur === MurmurStatus.Absent);
+      } else if (query.murmur === MurmurFilter.Any) {
         filtered = filtered.filter(p => p.systolicMurmur || p.diastolicMurmur);
+      } else if (query.murmur === MurmurFilter.NoUnknown) {
+        filtered = filtered.filter(p => p.murmur !== MurmurStatus.Unknown);
       }
     }
     if (query.murmurLocation) {

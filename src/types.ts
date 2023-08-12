@@ -23,6 +23,7 @@ export function nameLocation(location: Location) {
 
 export enum MurmurFilter {
   None = 'none',
+  NoUnknown = 'known',
   Any = 'any',
   Systolic = 'systolic',
   Diastolic = 'diastolic',
@@ -34,6 +35,8 @@ export function nameMurmur(murmur: MurmurFilter): string {
       return 'Systolic murmur';
     case MurmurFilter.Diastolic:
       return 'Diastolic murmur';
+    case MurmurFilter.NoUnknown:
+      return 'No unknown';
     case MurmurFilter.None:
       return 'No murmur';
     case MurmurFilter.Any:
