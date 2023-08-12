@@ -121,7 +121,7 @@ export default function AuscultationTrack({
     const instance = WaveSurfer.create({
       container: '#' + waveformId,
       url: getDataUrl(track.audioFile),
-      minPxPerSec: 100,
+      minPxPerSec: zoom,
       plugins: [
         HoverPlugin.create(),
         TimelinePlugin.create(),
