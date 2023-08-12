@@ -174,7 +174,11 @@ export default function AuscultationTrack({
         </span>
 
         <span
-          className="text-lg text-center"
+          className={`text-lg text-center ${
+            patient.mostAudible === track.location
+              ? 'text-error'
+              : 'text-warning'
+          }`}
           style={{
             visibility:
               showAnswer && patient.murmurLocations.includes(track.location)
@@ -182,7 +186,9 @@ export default function AuscultationTrack({
                 : 'hidden',
           }}
         >
-          Murmur detected
+          {patient.mostAudible === track.location
+            ? 'Most audible'
+            : 'Murmur detected'}
         </span>
 
         <div className="flex gap-2">
