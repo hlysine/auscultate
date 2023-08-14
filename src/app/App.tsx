@@ -271,6 +271,21 @@ export default function App(): JSX.Element {
         Filter and access heart sounds from the CirCor DigiScope Phonocardiogram
         Dataset.
       </p>
+      <p className="font-bold">Points to note</p>
+      <ul className="list-disc">
+        <li>
+          The provided analysis may not be 100% accurate and may not be the only
+          abnormalities found.
+        </li>
+        <li>
+          This dataset only records murmur. Other heart sound abnormalities are
+          not considered.
+        </li>
+        <li>
+          A patient with no detected murmur may still have other undocumented
+          abnormalities.
+        </li>
+      </ul>
       <div className="collapse collapse-arrow bg-base-200 my-4">
         <input type="checkbox" />
         <div className="collapse-title text-xl font-medium">Select Filters</div>
