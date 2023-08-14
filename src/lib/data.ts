@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import {
   Auscultation,
   Location,
+  Outcome,
   Patient,
   getGrading,
   getTiming,
@@ -13,6 +14,7 @@ const DATA_DIR = 'dist/app/data/';
 export let patients: Patient[] = [];
 
 export async function readPatients(): Promise<void> {
+  console.log('Reading patient index');
   const data = await fs.readFile(DATA_DIR + 'training_data.csv', {
     encoding: 'utf8',
   });
@@ -52,8 +54,26 @@ export async function readPatients(): Promise<void> {
             quality: row[19],
           },
     campaign: row[20],
+    outcome: Outcome.Abnormal, // fixed below by reading patient files
     additionalId: row[21] === 'nan' ? null : parseInt(row[21], 10),
   }));
+
+  console.log('Populating heart outcomes');
+
+  await Promise.all(
+    patients.map(async patient => {
+      const data = await fs.readFile(
+        DATA_DIR + `training_data/training_data/${patient.patientId}.txt`,
+        {
+          encoding: 'utf8',
+        }
+      );
+      const lines = data.split(/\r?\n/);
+      patient.outcome = lines
+        .find(line => line.startsWith('#Outcome:'))
+        ?.split(' ')[1] as Outcome;
+    })
+  );
 }
 
 export async function readAuscultation(

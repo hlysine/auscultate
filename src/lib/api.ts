@@ -14,6 +14,7 @@ import {
   MurmurShape,
   MurmurStatus,
   MurmurTiming,
+  Outcome,
   Patient,
   RandomResult,
 } from '../types';
@@ -94,6 +95,7 @@ router.get(
                 z.array(z.nativeEnum(MurmurQuality)),
               ])
               .optional(),
+            outcome: z.nativeEnum(Outcome).optional(),
           })
           .strict(),
       })
@@ -171,6 +173,9 @@ router.get(
       filtered = filtered.filter(p =>
         filterMurmurProp(p, query.murmur, 'quality', qualities)
       );
+    }
+    if (query.outcome) {
+      filtered = filtered.filter(p => p.outcome === query.outcome);
     }
     if (filtered.length === 0) {
       throw notFound('No patients found with the given criteria');

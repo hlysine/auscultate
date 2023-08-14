@@ -12,6 +12,7 @@ import {
   MurmurShape,
   MurmurStatus,
   MurmurTiming,
+  Outcome,
   nameGrading,
   nameLocation,
   nameMurmur,
@@ -50,6 +51,9 @@ function filterToParams(filter: FilterParams): URLSearchParams {
   if (filter.quality) {
     filter.quality.forEach(quality => params.append('quality', quality));
   }
+  if (filter.outcome) {
+    params.set('outcome', filter.outcome);
+  }
   return params;
 }
 
@@ -81,6 +85,9 @@ function paramsToFilter(params: URLSearchParams): FilterParams {
   }
   if (params.has('quality')) {
     newFilter.quality = params.getAll('quality') as MurmurQuality[];
+  }
+  if (params.has('outcome')) {
+    newFilter.outcome = params.get('outcome') as Outcome;
   }
   return newFilter;
 }
@@ -480,6 +487,42 @@ export default function App(): JSX.Element {
                   </div>
                 ))}
               </div>
+
+              <div className="divider">Heart Outcome</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <div className="form-control">
+                  <label className="label cursor-pointer gap-2">
+                    <input
+                      type="radio"
+                      className="radio"
+                      checked={!filterParams.outcome}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setFilterParams(f => ({ ...f, outcome: undefined }));
+                        }
+                      }}
+                    />
+                    <span className="label-text">No filter</span>
+                  </label>
+                </div>
+                {Object.values(Outcome).map(filter => (
+                  <div key={filter} className="form-control">
+                    <label className="label cursor-pointer gap-2">
+                      <input
+                        type="radio"
+                        className="radio"
+                        checked={filterParams.outcome === filter}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setFilterParams(f => ({ ...f, outcome: filter }));
+                          }
+                        }}
+                      />
+                      <span className="label-text">{filter}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
             </fieldset>
           </form>
         </div>
@@ -572,6 +615,7 @@ export default function App(): JSX.Element {
                     ))}
                   </p>
                 )}
+                <p className="text-lg">Heart outcome: {patient.outcome}</p>
                 <div className="flex gap-8 my-4 justify-end flex-wrap">
                   <div className="flex items-center gap-4">
                     <span className="label-text">Annotations:</span>

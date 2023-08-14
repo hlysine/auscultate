@@ -156,6 +156,11 @@ export enum Campaign {
   CC2014 = 'CC2014',
 }
 
+export enum Outcome {
+  Normal = 'Normal',
+  Abnormal = 'Abnormal',
+}
+
 export interface Murmur {
   timing: MurmurTiming;
   shape: MurmurShape;
@@ -178,6 +183,7 @@ export interface Patient {
   systolicMurmur: Murmur | null;
   diastolicMurmur: Murmur | null;
   campaign: Campaign;
+  outcome: Outcome;
   additionalId: number | null;
 }
 
@@ -239,4 +245,5 @@ export interface FilterParams {
   grading?: MurmurGrading[];
   pitch?: MurmurPitch[];
   quality?: MurmurQuality[];
+  outcome?: Outcome;
 }
