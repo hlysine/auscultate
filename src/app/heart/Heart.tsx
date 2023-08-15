@@ -280,6 +280,9 @@ export default function App(): JSX.Element {
       <div className="text-sm breadcrumbs flex justify-center w-full">
         <ul>
           <li>
+            <a href="https://lysine-med.hf.space/">Med</a>
+          </li>
+          <li>
             <Link to="/">Auscultation</Link>
           </li>
           <li>Heart Sounds</li>

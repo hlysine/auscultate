@@ -22,10 +22,18 @@ const links = [
 export default function App() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col gap-8 w-full items-center p-4 pt-16">
+    <div className="flex flex-col gap-8 w-full items-center p-8">
       <Helmet>
         <title>Auscultation Database</title>
       </Helmet>
+      <div className="text-sm breadcrumbs flex justify-center w-full">
+        <ul>
+          <li>
+            <a href="https://lysine-med.hf.space/">Med</a>
+          </li>
+          <li>Auscultation</li>
+        </ul>
+      </div>
       <p className="text-3xl text-center">Auscultation Database</p>
       <p>Auscultation practice with annotated sound tracks.</p>
       <div className="flex flex-col gap-8 items-stretch">
