@@ -34,12 +34,19 @@ RUN npm install
 # Build client and server
 RUN export VITE_SERVER_URL=$MODEL_REPO_NAME && npm run build
 
-# Download dataset from Kaggle
+# Download heart sound dataset from Kaggle
 RUN --mount=type=secret,id=KAGGLE_USERNAME,mode=0444,required=true \
     --mount=type=secret,id=KAGGLE_KEY,mode=0444,required=true \
     export KAGGLE_USERNAME=$(cat /run/secrets/KAGGLE_USERNAME) && \
     export KAGGLE_KEY=$(cat /run/secrets/KAGGLE_KEY) && \
-    kaggle datasets download -d bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2 --unzip -p $HOME/app/dist/app/data
+    kaggle datasets download -d bjoernjostein/the-circor-digiscope-phonocardiogram-dataset-v2 --unzip -p $HOME/app/dist/app/heart-data
+
+# Download breath sound dataset from Kaggle
+RUN --mount=type=secret,id=KAGGLE_USERNAME,mode=0444,required=true \
+    --mount=type=secret,id=KAGGLE_KEY,mode=0444,required=true \
+    export KAGGLE_USERNAME=$(cat /run/secrets/KAGGLE_USERNAME) && \
+    export KAGGLE_KEY=$(cat /run/secrets/KAGGLE_KEY) && \
+    kaggle datasets download -d vbookshelf/respiratory-sound-database --unzip -p $HOME/app/dist/app/breath-data
 
 EXPOSE 7860
 CMD [ "npm", "run", "start" ]

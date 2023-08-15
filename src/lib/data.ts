@@ -9,7 +9,7 @@ import {
   getTiming,
 } from '../types';
 
-const DATA_DIR = 'dist/app/data/';
+const DATA_DIR = 'dist/app/heart-data/';
 
 export let patients: Patient[] = [];
 
