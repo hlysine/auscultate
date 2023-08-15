@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import api from './lib/api';
 import { readPatients, patients } from './lib/data';
-import path from 'path';
 import cors from 'cors';
 import { isBoom } from '@hapi/boom';
 
@@ -34,7 +33,7 @@ app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
 
 // Handle client routing, return all requests to the app
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'app/index.html'));
+  res.sendFile('dist/app/index.html');
 });
 
 readPatients().then(() => {
