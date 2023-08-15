@@ -5,15 +5,14 @@ import {
   SoundWave,
   nameLocation,
   nameSoundWave,
-} from '../types';
+} from '../../heart-types';
 import WaveSurfer from 'wavesurfer.js';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
 import TimelinePlugin from 'wavesurfer.js/plugins/timeline';
 import RegionsPlugin from 'wavesurfer.js/plugins/regions';
 import SpectrogramPlugin from 'wavesurfer.js/plugins/spectrogram';
 import { getDataUrl } from './api';
-import { useAudio } from './AudioContext';
-import './waveform.css';
+import { useAudio } from '../AudioContext';
 
 export interface AuscultationTrackProps {
   patient: FullPatient;

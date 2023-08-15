@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { FilterParams, FullPatient, RandomResult } from '../types';
+import { FilterParams, FullPatient, RandomResult } from '../../heart-types';
 
 const SERVER_BASE_PATH = import.meta.env.VITE_SERVER_URL;
 
 export async function getPatient(patientId: number): Promise<FullPatient> {
   const response = await axios.get(
-    `${SERVER_BASE_PATH}api/patient?id=${patientId}`
+    `${SERVER_BASE_PATH}api/heart/patient?id=${patientId}`
   );
   return response.data;
 }
@@ -13,9 +13,12 @@ export async function getPatient(patientId: number): Promise<FullPatient> {
 export async function getRandomPatient(
   params: FilterParams
 ): Promise<RandomResult> {
-  const response = await axios.get(`${SERVER_BASE_PATH}api/patient/random`, {
-    params,
-  });
+  const response = await axios.get(
+    `${SERVER_BASE_PATH}api/heart/patient/random`,
+    {
+      params,
+    }
+  );
   return response.data;
 }
 

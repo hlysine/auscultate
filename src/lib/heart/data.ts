@@ -7,7 +7,7 @@ import {
   Patient,
   getGrading,
   getTiming,
-} from '../types';
+} from '../../heart-types';
 
 const DATA_DIR = 'dist/app/heart-data/';
 

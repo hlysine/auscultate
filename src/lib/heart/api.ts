@@ -1,6 +1,6 @@
 import express from 'express';
 import { z } from 'zod';
-import { validate, wrap } from './helper';
+import { validate, wrap } from '../helper';
 import { patients, readAuscultation } from './data';
 import { notFound } from '@hapi/boom';
 import {
@@ -17,7 +17,7 @@ import {
   Outcome,
   Patient,
   RandomResult,
-} from '../types';
+} from '../../heart-types';
 
 const router = express.Router();
 

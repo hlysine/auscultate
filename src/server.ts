@@ -1,7 +1,10 @@
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
-import api from './lib/api';
-import { readPatients, patients } from './lib/data';
+import heartApi from './lib/heart/api';
+import {
+  readPatients as readHeartPatients,
+  patients as heartPatients,
+} from './lib/heart/data';
 import cors from 'cors';
 import { isBoom } from '@hapi/boom';
 import { fileURLToPath } from 'url';
@@ -21,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve API requests from the router
-app.use('/api', api);
+app.use('/api/heart', heartApi);
 
 // Serve app production bundle
 app.use(express.static('dist/app'));
@@ -41,8 +44,12 @@ app.get('*', (_req, res) => {
   res.sendFile(join(__dirname, 'app/index.html'));
 });
 
-readPatients().then(() => {
-  console.log(`${patients.length} patients loaded`);
+Promise.all([
+  (async () => {
+    await readHeartPatients();
+    console.log(`Heart sounds: ${heartPatients.length} patients loaded`);
+  })(),
+]).then(() => {
   app.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`);
   });
