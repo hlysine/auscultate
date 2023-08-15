@@ -4,6 +4,11 @@ import api from './lib/api';
 import { readPatients, patients } from './lib/data';
 import cors from 'cors';
 import { isBoom } from '@hapi/boom';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const { PORT = 7860 } = process.env;
 
@@ -33,7 +38,7 @@ app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
 
 // Handle client routing, return all requests to the app
 app.get('*', (_req, res) => {
-  res.sendFile('dist/app/index.html');
+  res.sendFile(join(__dirname, 'app/index.html'));
 });
 
 readPatients().then(() => {
