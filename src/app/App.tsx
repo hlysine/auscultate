@@ -42,7 +42,7 @@ export default function App() {
             key={link.title}
             className="card sm:card-side bg-base-300 shadow-xl w-full sm:min-w-[500px]"
           >
-            <figure className="bg-base-content p-4">{link.icon}</figure>
+            <figure className="bg-accent p-4">{link.icon}</figure>
             <div className="card-body">
               <h2 className="card-title">{link.title}</h2>
               <p>{link.description}</p>
