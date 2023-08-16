@@ -7,10 +7,24 @@ import {
   RecordingEquipment,
   Sex,
 } from '../../breath-types';
+import { lineStart } from 'readable-regexp';
 
 const DATA_DIR = 'dist/app/breath-data/';
-const TRACK_NAME =
-  /^(?<patientId>\d+)_(?<recordingId>\w+)_(?<location>[a-zA-Z]+)_(?<acquisitionMode>[a-zA-Z]+)_(?<equipment>\w+)\.txt$/;
+
+// prettier-ignore
+const TRACK_NAME = lineStart
+  .captureAs`patientId`.oneOrMore.digit
+  .exactly`_`
+  .captureAs`recordingId`.oneOrMore.word
+  .exactly`_`
+  .captureAs`location`.oneOrMore.charIn`a-zA-Z`
+  .exactly`_`
+  .captureAs`acquisitionMode`.oneOrMore.charIn`a-zA-Z`
+  .exactly`_`
+  .captureAs`equipment`.oneOrMore.word
+  .exactly`.txt`
+  .lineEnd
+  .toRegExp();
 
 export const cases: Case[] = [];
 
