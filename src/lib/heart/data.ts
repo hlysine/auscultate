@@ -14,7 +14,7 @@ const DATA_DIR = 'dist/app/heart-data/';
 export let patients: Patient[] = [];
 
 export async function readPatients(): Promise<void> {
-  console.log('Reading patient index');
+  console.log('Heart sounds: Reading patient index');
   const data = await fs.readFile(DATA_DIR + 'training_data.csv', {
     encoding: 'utf8',
   });
@@ -58,7 +58,7 @@ export async function readPatients(): Promise<void> {
     additionalId: row[21] === 'nan' ? null : parseInt(row[21], 10),
   }));
 
-  console.log('Populating heart outcomes');
+  console.log('Heart sounds: Populating heart outcomes');
 
   await Promise.all(
     patients.map(async patient => {

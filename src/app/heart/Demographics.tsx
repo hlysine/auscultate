@@ -1,25 +1,9 @@
 import React from 'react';
 import { Patient } from '../../heart-types';
+import DataItem from '../DataItem';
 
 export interface DemographicsProps {
   patient: Patient;
-}
-
-function DataItem({
-  label,
-  value,
-  unit,
-}: {
-  label: string;
-  value?: string | null | undefined;
-  unit?: string | null | undefined;
-}): JSX.Element {
-  return (
-    <span className="min-w-[220px]">
-      <b>{label}: </b>
-      {value === null || value === undefined ? '<NA>' : value + (unit ?? '')}
-    </span>
-  );
 }
 
 export default function Demographics({

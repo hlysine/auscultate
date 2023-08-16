@@ -1,10 +1,15 @@
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import heartApi from './lib/heart/api';
+import breathApi from './lib/breath/api';
 import {
   readPatients as readHeartPatients,
   patients as heartPatients,
 } from './lib/heart/data';
+import {
+  readCases as readBreathCases,
+  cases as breathCases,
+} from './lib/breath/data';
 import cors from 'cors';
 import { isBoom } from '@hapi/boom';
 import { fileURLToPath } from 'url';
@@ -25,6 +30,7 @@ app.use(express.json());
 
 // Serve API requests from the router
 app.use('/api/heart', heartApi);
+app.use('/api/breath', breathApi);
 
 // Serve app production bundle
 app.use(express.static('dist/app'));
@@ -48,6 +54,10 @@ Promise.all([
   (async () => {
     await readHeartPatients();
     console.log(`Heart sounds: ${heartPatients.length} patients loaded`);
+  })(),
+  (async () => {
+    await readBreathCases();
+    console.log(`Breath sounds: ${breathCases.length} cases loaded`);
   })(),
 ]).then(() => {
   app.listen(PORT, () => {

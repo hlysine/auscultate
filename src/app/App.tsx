@@ -8,13 +8,13 @@ const links = [
   {
     icon: <img src={HeartSvg} />,
     title: 'Heart Sounds',
-    description: 'From the CirCor DigiScope Phonocardiogram dataset',
+    description: 'From the CirCor DigiScope Phonocardiogram Dataset',
     link: '/heart',
   },
   {
     icon: <img src={LungsSvg} />,
     title: 'Breath Sounds',
-    description: 'Coming soon',
+    description: 'From the Respiratory Sound Database',
     link: '/breath',
   },
 ];
