@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
 # Install kaggle silently
 RUN yes | pip3 install kaggle --exists-action i --break-system-packages
 
+# Install pm2
+RUN npm install pm2 -g
+
 # Switch to the "user" user
 USER user
 
@@ -50,4 +53,5 @@ RUN --mount=type=secret,id=KAGGLE_USERNAME,mode=0444,required=true \
     kaggle datasets download -d vbookshelf/respiratory-sound-database --unzip -p $HOME/app/dist/app/breath-data
 
 EXPOSE 7860
-CMD [ "npm", "run", "start" ]
+# CMD [ "npm", "run", "start" ]
+CMD ["pm2-runtime", "processes.json"]

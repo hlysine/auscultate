@@ -14,6 +14,7 @@ import cors from 'cors';
 import { isBoom } from '@hapi/boom';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { log } from './lib/helper';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -53,14 +54,14 @@ app.get('*', (_req, res) => {
 Promise.all([
   (async () => {
     await readHeartPatients();
-    console.log(`Heart sounds: ${heartPatients.length} patients loaded`);
+    log(`Heart sounds: ${heartPatients.length} patients loaded`);
   })(),
   (async () => {
     await readBreathCases();
-    console.log(`Breath sounds: ${breathCases.length} cases loaded`);
+    log(`Breath sounds: ${breathCases.length} cases loaded`);
   })(),
 ]).then(() => {
   app.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`);
+    log(`Server listening at http://localhost:${PORT}`);
   });
 });

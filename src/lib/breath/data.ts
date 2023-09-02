@@ -8,6 +8,7 @@ import {
   Sex,
 } from '../../breath-types';
 import { captureAs, exactly, lineEnd, lineStart, match } from 'readable-regexp';
+import { log } from '../helper';
 
 const DATA_DIR = 'dist/app/breath-data/';
 
@@ -29,7 +30,7 @@ const TRACK_NAME = match(
 export const cases: Case[] = [];
 
 export async function readCases(): Promise<void> {
-  console.log('Breath sounds: Reading patient index');
+  log('Breath sounds: Reading patient index');
 
   const files = await fs.readdir(
     DATA_DIR +
@@ -67,7 +68,7 @@ export async function readCases(): Promise<void> {
     };
   });
 
-  console.log('Breath sounds: Populating sound tracks');
+  log('Breath sounds: Populating sound tracks');
 
   await Promise.all(
     patients.map(async patient => {
@@ -109,7 +110,7 @@ export async function readCases(): Promise<void> {
     })
   );
 
-  console.log('Breath sounds: Splitting patients into cases');
+  log('Breath sounds: Splitting patients into cases');
 
   // Split each patient into multiple patients by the recording id in their tracks
   // If multiple tracks from the same patient has the same recording id, keep them in the same patient

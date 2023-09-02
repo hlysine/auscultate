@@ -8,13 +8,14 @@ import {
   getGrading,
   getTiming,
 } from '../../heart-types';
+import { log } from '../helper';
 
 const DATA_DIR = 'dist/app/heart-data/';
 
 export let patients: Patient[] = [];
 
 export async function readPatients(): Promise<void> {
-  console.log('Heart sounds: Reading patient index');
+  log('Heart sounds: Reading patient index');
   const data = await fs.readFile(DATA_DIR + 'training_data.csv', {
     encoding: 'utf8',
   });
@@ -58,7 +59,7 @@ export async function readPatients(): Promise<void> {
     additionalId: row[21] === 'nan' ? null : parseInt(row[21], 10),
   }));
 
-  console.log('Heart sounds: Populating heart outcomes');
+  log('Heart sounds: Populating heart outcomes');
 
   await Promise.all(
     patients.map(async patient => {
