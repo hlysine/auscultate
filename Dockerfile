@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 # Install kaggle silently
-RUN yes | pip3 install kaggle --exists-action i --break-system-packages
+RUN yes | pip3 install kaggle==1.5.16 --exists-action i --break-system-packages
 
 # Install pm2
 RUN npm install pm2 -g
