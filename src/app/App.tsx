@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import HeartSvg from './heart.svg';
 import LungsSvg from './lungs.svg';
+import AnalyzeSvg from './analyze.svg';
 
 const links = [
   {
@@ -16,6 +17,12 @@ const links = [
     title: 'Breath Sounds',
     description: 'From the Respiratory Sound Database',
     link: '/breath',
+  },
+  {
+    icon: <img src={AnalyzeSvg} />,
+    title: 'Audio Analysis',
+    description: 'Load a custom audio file',
+    link: '/analyze',
   },
 ];
 

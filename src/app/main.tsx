@@ -4,6 +4,7 @@ import './globals.css';
 import App from './App';
 import Heart from './heart/Heart';
 import Breath from './breath/Breath';
+import Analyze from './analyze/Analyze';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AudioContext } from './AudioContext';
 
@@ -25,6 +26,14 @@ const router = createBrowserRouter([
     element: (
       <AudioContext>
         <Breath />
+      </AudioContext>
+    ),
+  },
+  {
+    path: '/analyze',
+    element: (
+      <AudioContext>
+        <Analyze />
       </AudioContext>
     ),
   },
