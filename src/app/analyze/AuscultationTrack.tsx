@@ -7,19 +7,23 @@ import SpectrogramPlugin from 'wavesurfer.js/plugins/spectrogram';
 import { useAudio } from '../AudioContext';
 
 export interface AuscultationTrackProps {
+  name: string;
   audioFile: string;
   zoom: number;
   waveform: boolean;
   spectrogram: boolean;
+  onDelete?: () => void;
 }
 
 export default function AuscultationTrack({
+  name,
   audioFile,
   zoom,
   waveform: showWaveform,
   spectrogram: showSpectrogram,
+  onDelete,
 }: AuscultationTrackProps): JSX.Element {
-  const waveformId = 'waveform_analyze';
+  const waveformId = `waveform_analyze_${name}`;
 
   const { nowPlaying, setNowPlaying } = useAudio();
 
@@ -98,8 +102,7 @@ export default function AuscultationTrack({
   return (
     <div className="flex gap-4 my-8 flex-wrap justify-center">
       <div className="flex flex-col w-48 gap-4 my-4">
-        <span className="text-xl text-center flex-1">Audio file</span>
-
+        <span className="text-xl text-center flex-1">{name}</span>
         <div className="flex gap-2">
           <button
             className="btn btn-accent flex-grow-[2]"
@@ -130,6 +133,18 @@ export default function AuscultationTrack({
             </svg>
           </button>
         </div>
+        <button
+          className="btn btn-error btn-sm"
+          onClick={async () => {
+            onDelete?.();
+            await wavesurfer.current?.destroy();
+            wavesurfer.current = undefined;
+          }}
+        >
+          <svg width="24px" height="24px" viewBox="0 0 24 24">
+            <path d="M22 5a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h5V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h5a1 1 0 0 1 1 1zM4.934 21.071 4 8h16l-.934 13.071a1 1 0 0 1-1 .929H5.931a1 1 0 0 1-.997-.929zM15 18a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0z" />
+          </svg>
+        </button>
       </div>
       <div
         id={waveformId}

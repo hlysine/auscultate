@@ -45,7 +45,7 @@ function getColorByWave(wave: SoundWave): string {
   }
 }
 
-export default function AuscultationTrack({
+export default function AuscultationTrackComponent({
   patient,
   track,
   zoom,

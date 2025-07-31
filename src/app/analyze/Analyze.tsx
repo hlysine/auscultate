@@ -4,21 +4,32 @@ import { Helmet } from 'react-helmet';
 import AuscultationTrack from './AuscultationTrack';
 
 export interface FilterParams {
-  track?: string;
+  tracks?: string[];
+  names?: string[];
 }
 
 function filterToParams(filter: FilterParams): URLSearchParams {
   const params = new URLSearchParams();
-  if (filter.track) {
-    params.set('track', filter.track);
+  if (filter.tracks) {
+    filter.tracks.forEach(track => {
+      params.append('t', track);
+    });
+  }
+  if (filter.names) {
+    filter.names.forEach(name => {
+      params.append('n', name);
+    });
   }
   return params;
 }
 
 function paramsToFilter(params: URLSearchParams): FilterParams {
   const newFilter: FilterParams = {};
-  if (params.has('track')) {
-    newFilter.track = params.get('track')!;
+  if (params.has('t')) {
+    newFilter.tracks = params.getAll('t');
+  }
+  if (params.has('n')) {
+    newFilter.names = params.getAll('n');
   }
   return newFilter;
 }
@@ -32,16 +43,21 @@ export default function App(): JSX.Element {
   const [waveform, setWaveform] = useState(false);
   const [spectrogram, setSpectrogram] = useState(false);
 
+  const nameRef = useRef<HTMLInputElement>(null);
   const urlRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const filter = paramsToFilter(searchParams);
     setFilterParams(filter);
-    if (urlRef.current) urlRef.current.value = filter.track ?? '';
+    if (nameRef.current) nameRef.current.value = '';
+    if (urlRef.current) urlRef.current.value = '';
   }, [searchParams]);
 
   const loadAudio = () => {
-    filterParams.track = urlRef.current?.value ?? '';
+    filterParams.names = filterParams.names ?? [];
+    filterParams.tracks = filterParams.tracks ?? [];
+    filterParams.names.push(nameRef.current?.value ?? '');
+    filterParams.tracks.push(urlRef.current?.value ?? '');
     setSearchParams(filterToParams(filterParams));
   };
 
@@ -65,12 +81,20 @@ export default function App(): JSX.Element {
       <p className="text-center">
         Load an audio file by URL for playback and analysis.
       </p>
-      <input
-        ref={urlRef}
-        type="text"
-        className="input input-bordered w-full"
-        placeholder="Enter audio file URL"
-      ></input>
+      <div className="flex gap-2">
+        <input
+          ref={nameRef}
+          type="text"
+          className="input input-bordered w-full max-w-md flex-grow-0 flex-shrink"
+          placeholder="Enter track name"
+        ></input>
+        <input
+          ref={urlRef}
+          type="text"
+          className="input input-bordered w-full flex-1 min-w-[50%]"
+          placeholder="Enter audio file URL"
+        ></input>
+      </div>
       <button className="btn btn-primary" onClick={loadAudio}>
         Load audio
       </button>
@@ -110,15 +134,28 @@ export default function App(): JSX.Element {
           />
         </div>
       </div>
-      {filterParams.track && (
+      {filterParams.tracks?.map((track, index) => (
         <AuscultationTrack
-          key={filterParams.track}
-          audioFile={filterParams.track}
+          key={track}
+          name={filterParams.names?.[index] ?? `Track ${index + 1}`}
+          audioFile={track}
           zoom={audioZoom}
           waveform={waveform}
           spectrogram={spectrogram}
+          onDelete={() => {
+            const newTracks = [...(filterParams.tracks ?? [])];
+            const newNames = [...(filterParams.names ?? [])];
+            newTracks.splice(index, 1);
+            newNames.splice(index, 1);
+            setSearchParams(
+              filterToParams({
+                tracks: newTracks,
+                names: newNames,
+              })
+            );
+          }}
         />
-      )}
+      ))}
     </div>
   );
 }

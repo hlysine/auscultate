@@ -53,7 +53,7 @@ function nameSegment(segment: SoundSegment | Abnormalities): string {
   }
 }
 
-export default function AuscultationTrack({
+export default function AuscultationTrackComponent({
   track,
   zoom,
   showAnswer,
