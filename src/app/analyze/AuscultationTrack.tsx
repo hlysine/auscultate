@@ -23,7 +23,10 @@ export default function AuscultationTrack({
   spectrogram: showSpectrogram,
   onDelete,
 }: AuscultationTrackProps): JSX.Element {
-  const waveformId = `waveform_analyze_${name}`;
+  const waveformId = `waveform_analyze_${name.replaceAll(
+    /[^a-zA-Z0-9-_]/g,
+    '_'
+  )}`;
 
   const { nowPlaying, setNowPlaying } = useAudio();
 
