@@ -12,6 +12,7 @@ export interface AuscultationTrackProps {
   zoom: number;
   waveform: boolean;
   spectrogram: boolean;
+  editable?: boolean;
   onDelete?: () => void;
 }
 
@@ -21,6 +22,7 @@ export default function AuscultationTrack({
   zoom,
   waveform: showWaveform,
   spectrogram: showSpectrogram,
+  editable,
   onDelete,
 }: AuscultationTrackProps): JSX.Element {
   const waveformId = `waveform_analyze_${name.replaceAll(
@@ -136,18 +138,26 @@ export default function AuscultationTrack({
             </svg>
           </button>
         </div>
-        <button
-          className="btn btn-error btn-sm"
-          onClick={async () => {
-            onDelete?.();
-            await wavesurfer.current?.destroy();
-            wavesurfer.current = undefined;
-          }}
-        >
-          <svg width="24px" height="24px" viewBox="0 0 24 24">
-            <path d="M22 5a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h5V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h5a1 1 0 0 1 1 1zM4.934 21.071 4 8h16l-.934 13.071a1 1 0 0 1-1 .929H5.931a1 1 0 0 1-.997-.929zM15 18a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0z" />
-          </svg>
-        </button>
+        {editable && (
+          <button
+            className="btn btn-error btn-sm btn-outline text-base-content"
+            onClick={async () => {
+              if (!editable) return;
+              onDelete?.();
+              await wavesurfer.current?.destroy();
+              wavesurfer.current = undefined;
+            }}
+          >
+            <svg
+              width="24px"
+              height="24px"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M22 5a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h5V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h5a1 1 0 0 1 1 1zM4.934 21.071 4 8h16l-.934 13.071a1 1 0 0 1-1 .929H5.931a1 1 0 0 1-.997-.929zM15 18a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0zm-4 0a1 1 0 0 0 2 0v-6a1 1 0 0 0-2 0z" />
+            </svg>
+          </button>
+        )}
       </div>
       <div
         id={waveformId}
